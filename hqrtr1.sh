@@ -60,3 +60,9 @@ EOF
 
 nft -f /etc/nftables.conf
 systemctl restart networking
+
+#На следующем этапе вписываем на br-rtr
+#auto ens3
+#iface ens3 inet static
+# address 172.16.2.2/28
+# gateway 172.16.2.1
