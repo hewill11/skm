@@ -30,3 +30,6 @@ write
 EOF
 
 reboot
+#После установки и применение скриптов, прописать на каждом устройстве строку
+#nano /etc/frr/daemons -> zebra=yes
+#systemctl restart frr
