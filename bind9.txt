@@ -1,0 +1,69 @@
+ШАГ 4.2 Настройка named.conf.local
+
+nano /etc/bind/named.conf.local
+
+zone "company.local" {
+    type master;
+    file "/etc/bind/db.company.local";
+};
+
+zone "1.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/db.192.168.1";
+};
+
+
+ШАГ 4.3 Создание прямой зоны
+
+cp /etc/bind/db.local /etc/bind/db.company.local
+nano /etc/bind/db.company.local
+
+$TTL    604800
+@       IN      SOA     server.company.local. root.company.local. (
+                        2         ; Serial
+                        604800    ; Refresh
+                        86400     ; Retry
+                        2419200   ; Expire
+                        604800 )  ; Negative Cache TTL
+
+@       IN      NS      server.company.local.
+
+server      IN      A       192.168.1.10
+admin       IN      A       192.168.1.101
+dev         IN      A       192.168.1.102
+tester      IN      A       192.168.1.103
+director    IN      A       192.168.1.104
+
+ШАГ 4.4 Обратная зона (reverse DNS)
+
+cp /etc/bind/db.127 /etc/bind/db.192.168.1
+nano /etc/bind/db.192.168.1
+
+$TTL    604800
+@       IN      SOA     server.company.local. root.company.local. (
+                        2
+                        604800
+                        86400
+                        2419200
+                        604800 )
+
+@       IN      NS      server.company.local.
+
+10      IN      PTR     server.company.local.
+101     IN      PTR     admin.company.local.
+102     IN      PTR     dev.company.local.
+103     IN      PTR     tester.company.local.
+104     IN      PTR     director.company.local.
+
+
+ШАГ 4.5 Проверка конфигов
+named-checkconf
+named-checkzone company.local /etc/bind/db.company.local
+named-checkzone 1.168.192.in-addr.arpa /etc/bind/db.192.168.1
+
+ШАГ 4.6 Запуск DNS
+systemctl restart bind9
+systemctl enable bind9
+systemctl status bind9
+
+
