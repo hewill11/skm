@@ -1,0 +1,41 @@
+[1/28/2026 10:16 PM] Хэвил: Самый первый скрипт после сборки стенда на isp (Пропись nft&interfaces)
+wget https://raw.githubusercontent.com/hewill11/skm/main/isp1.sh -O isp1.sh
+Команды для проверки
+nano /etc/nftables.conf
+ip -br a
+[1/28/2026 10:23 PM] Хэвил: Второй скрипт, отдельно подключаем облако для скачивания и далее возвращаем на место и перезагружаем сеть на isp (на каждом устройстве после соединения обратно)
+wget https://raw.githubusercontent.com/hewill11/skm/main/hqrtr1.sh -O hqrtr1.sh
+Команды для проверки:
+ip -br a
+ping 8.8.8.8/172.16.1.1
+[1/28/2026 10:57 PM] Хэвил: Третий скрипт br-rtr
+Перед этим прописать статику на br-rtr
+(Лежит в hqrtr1.sh)
+wget https://raw.githubusercontent.com/hewill11/skm/main/brrtr1.sh -O brrtr1.sh
+В нем же и лежат кфг для настройки статики на следующиxх устройствах.
+Команды для проверки:
+ping -c 3 172.16.2.1 – проверяем связность BR-RTR → ISP по WAN 172.16.2.0/28
+ping -c 3 5.255.255.242 – проверяем доступ в интернет с BR-RTR (как в модуле)
+[1/28/2026 11:45 PM] Хэвил: Четвертый скрипт hq-rtr(вланы) после юзеров
+https://raw.githubusercontent.com/hewill11/skm/main/hqvlan1.sh -O hqvlan1.sh
+[1/29/2026 12:09 AM] Хэвил: Пятый скрипт ssh и баннер HQ-SRV и BR-SRV
+https://raw.githubusercontent.com/hewill11/skm/main/sshs.sh -O sshs.sh
+Пароль - P@ssw0rd
+Команды для проверки:
+ssh sshuser@192.168.100.2 -p 2026 (С hq-cli)
+[1/29/2026 1:07 AM] Хэвил: Шестой скрипт ospf на HQ-RTR и BR-RTR
+https://raw.githubusercontent.com/hewill11/skm/main/ospfbr.sh;ospfhq.sh
+После установки и применение скриптов, прописать на каждом устройстве строку
+nano /etc/frr/daemons -> zebra=yes
+systemctl restart frr
+[1/29/2026 1:17 AM] Хэвил: Седьмой скрипт dhcp на hq-rtr для hq-cli
+https://raw.githubusercontent.com/hewill11/skm/main/dhcprtr.sh -O dhcprtr.sh
+Команды для проверки: 
+systemctl status isc-dhcp-server
+HQ-CLI
+ping google.com
+ip -br a
+[1/29/2026 1:18 AM] Хэвил: Восьмой скрипт dns
+https://raw.githubusercontent.com/hewill11/skm/main/dns.sh -O dns.sh
+Применяем и все
+
