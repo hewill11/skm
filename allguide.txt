@@ -28,6 +28,8 @@ https://raw.githubusercontent.com/hewill11/skm/main/ospfbr.sh;ospfhq.sh
 После установки и применение скриптов, прописать на каждом устройстве строку
 nano /etc/frr/daemons -> zebra=yes
 systemctl restart frr
+vtysh
+show ip ospf neighbor
 [1/29/2026 1:17 AM] Хэвил: Седьмой скрипт dhcp на hq-rtr для hq-cli
 https://raw.githubusercontent.com/hewill11/skm/main/dhcprtr.sh -O dhcprtr.sh
 Команды для проверки: 
@@ -35,7 +37,56 @@ systemctl status isc-dhcp-server
 HQ-CLI
 ping google.com
 ip -br a
-[1/29/2026 1:18 AM] Хэвил: Восьмой скрипт dns
+[1/29/2026 1:18 AM] Хэвил: Восьмой скрипт dns (HQ-SRV0
 https://raw.githubusercontent.com/hewill11/skm/main/dns.sh -O dns.sh
+ping br-rtr.au-team.irpo
 Применяем и все
+ЮЗЕРЫ
+HQ-SRV и BR
+useradd -m -s /bin/bash sshuser -u 2026 -U
+usermod -aG sudo sshuser
+passwd sshuser
+visudo
+sshuser ALL=9(ALL:ALL) NOPASSWD:ALL
+HQ-RTR BR
+useradd -m -s- /bin/bash net_admin -U
+usermod -aG sudo net_admin
+passwd net_admin
+visudo
+net_admin	ALL=(ALL:ALL) NOPASSWD:ALL
 
+GRE
+
+HQ-RTR 
+nmtui
+
+gre
+tun1
+
+ens3
+172.16.1.2
+172.16.2.2
+
+10.10.0.1/30
+
+etc/network/interfaces > post-ip ip link set gre0 up
+systemctl restart networking
+nmcli conncetion modify gre ip-tunnel.ttl 64
+
+BR-RTR
+nmtui
+gre
+tun1
+
+ens3
+172.16.2.2
+172.16.1.2
+
+10.10.0.2/30
+
+и тоже самое как на HQ-RTR
+с BR ping 10.10.0.1
+С HQ ping 10.10.0.2
+
+ВРЕМЯ
+timedatectl set-timezone Asia/Krasnoyarsk
